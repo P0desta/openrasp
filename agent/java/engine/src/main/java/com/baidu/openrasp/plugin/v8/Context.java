@@ -58,12 +58,13 @@ public class Context {
 
     public String getJson() {
         String contentType = request.getContentType();
-        byte[] body = request.getBody();
-        if (contentType.contains("application/json") && body != null) {
-            return new String(body);
-        } else {
-            return null;
+        if (contentType != null && contentType.contains("application/json")) {
+            byte[] body = request.getBody();
+            if (body != null) {
+                return new String(body);
+            }
         }
+        return null;
     }
 
     public byte[] getHeader(int[] size) {
