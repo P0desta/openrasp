@@ -18,13 +18,11 @@ package com.baidu.openrasp.hook.sql;
 
 import com.baidu.openrasp.HookHandler;
 import com.baidu.openrasp.plugin.checker.CheckParameter;
-import com.baidu.openrasp.plugin.js.engine.JSContext;
-import com.baidu.openrasp.plugin.js.engine.JSContextFactory;
 import com.baidu.openrasp.tool.annotation.HookAnnotation;
 import com.baidu.openrasp.tool.Reflection;
 
 import javassist.*;
-import org.mozilla.javascript.Scriptable;
+import java.util.HashMap;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -164,15 +162,10 @@ public class SQLStatementHook extends AbstractSqlHook {
      * @param stmt sql语句
      */
     public static void checkSQL(String server, Object statement, String stmt) {
-        if (stmt != null && !stmt.isEmpty() && !HookHandler.commonLRUCache.isContainsKey(server.trim() + stmt.trim())) {
-            JSContext cx = JSContextFactory.enterAndInitContext();
-            Scriptable params = cx.newObject(cx.getScope());
-            String connectionId = getSqlConnectionId(server, statement);
-            if (connectionId != null) {
-                params.put(server + "_connection_id", params, connectionId);
-            }
-            params.put("server", params, server);
-            params.put("query", params, stmt);
+        if (stmt != null && !stmt.isEmpty()) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("server", server);
+            params.put("query", stmt);
 
             HookHandler.doCheck(CheckParameter.Type.SQL, params);
         }
@@ -185,12 +178,11 @@ public class SQLStatementHook extends AbstractSqlHook {
      * @param e      sql执行抛出的异常
      */
     public static void checkSQLErrorCode(String server, SQLException e) {
-        JSContext cx = JSContextFactory.enterAndInitContext();
-        Scriptable params = cx.newObject(cx.getScope());
-        params.put("server", params, server);
-        params.put("errorCode", params, String.valueOf(e.getErrorCode()));
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("server", server);
+        params.put("errorCode", String.valueOf(e.getErrorCode()));
         String message = server + " error " + e.getErrorCode() + " detected: " + e.getMessage();
-        params.put("message", params, message);
+        params.put("message", message);
         HookHandler.doCheck(CheckParameter.Type.SQL, params);
     }
 }

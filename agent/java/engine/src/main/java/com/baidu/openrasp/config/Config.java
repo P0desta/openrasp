@@ -837,7 +837,7 @@ public class Config extends FileScanListener {
         }
         if (HookHandler.commonLRUCache.maxSize() != this.sqlCacheCapacity) {
             HookHandler.commonLRUCache.clear();
-            HookHandler.commonLRUCache = new LRUCache<String, String>(this.sqlCacheCapacity);
+            HookHandler.commonLRUCache = new LRUCache<Object, String>(this.sqlCacheCapacity);
         }
     }
 

@@ -20,8 +20,6 @@ import com.baidu.openrasp.cloud.utils.CloudUtils;
 import com.baidu.openrasp.hook.AbstractClassHook;
 import com.baidu.openrasp.messaging.LogConfig;
 import com.baidu.openrasp.plugin.checker.CheckerManager;
-import com.baidu.openrasp.plugin.js.engine.JsPluginManager;
-import com.baidu.openrasp.tool.FileUtil;
 import com.baidu.openrasp.tool.model.ApplicationModel;
 import com.baidu.openrasp.transformer.CustomClassTransformer;
 import org.apache.log4j.Logger;
@@ -35,6 +33,7 @@ import java.util.LinkedList;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import com.baidu.openrasp.plugin.v8.*;
 /**
  * Created by tyy on 18-1-24.
  *
@@ -60,7 +59,7 @@ public class EngineBoot implements Module {
         }
         readVersion();
         // 初始化插件系统
-        JsPluginManager.init();
+        V8.Init();
         CheckerManager.init();
         initTransformer(inst);
         String message = "OpenRASP Engine Initialized [" + projectVersion + " (build: GitCommit=" + gitCommit + " date="
@@ -72,7 +71,7 @@ public class EngineBoot implements Module {
 
     @Override
     public void release() {
-        JsPluginManager.release();
+        V8.Release();
         CheckerManager.release();
     }
 

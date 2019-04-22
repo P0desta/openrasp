@@ -25,7 +25,6 @@ import com.baidu.openrasp.hook.XXEHook;
 import com.baidu.openrasp.request.DubboRequest;
 import com.baidu.openrasp.plugin.checker.CheckParameter;
 import com.baidu.openrasp.plugin.checker.CheckerManager;
-import com.baidu.openrasp.plugin.js.engine.JSContext;
 import com.baidu.openrasp.request.AbstractRequest;
 import com.baidu.openrasp.request.HttpServletRequest;
 import com.baidu.openrasp.response.HttpServletResponse;
@@ -88,7 +87,7 @@ public class HookHandler {
     private static final Map<String, Object> EMPTY_MAP = new HashMap<String, Object>();
     private static final int DEFAULT_LRU_CACHE_CAPACITY = 100;
     //全局lru的缓存
-    public static LRUCache<String, String> commonLRUCache = new LRUCache<String, String>(DEFAULT_LRU_CACHE_CAPACITY);
+    public static LRUCache<Object, String> commonLRUCache = new LRUCache<Object, String>(DEFAULT_LRU_CACHE_CAPACITY);
 
     /**
      * 用于关闭当前的线程的hook点
@@ -178,7 +177,7 @@ public class HookHandler {
             requestCache.set(requestContainer);
             responseCache.set(responseContainer);
             XXEHook.resetLocalExpandedSystemIds();
-            doCheck(CheckParameter.Type.REQUEST, JSContext.getUndefinedValue());
+            doCheck(CheckParameter.Type.REQUEST, new Object());
         }
     }
 
@@ -193,7 +192,7 @@ public class HookHandler {
             DubboRequest requestContainer = new DubboRequest(request);
             requestCache.set(requestContainer);
             XXEHook.resetLocalExpandedSystemIds();
-            doCheck(CheckParameter.Type.DUBBOREQUEST, JSContext.getUndefinedValue());
+            doCheck(CheckParameter.Type.DUBBOREQUEST, new Object());
         }
     }
 
